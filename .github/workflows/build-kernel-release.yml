@@ -28,7 +28,13 @@ on:
           - android14-6.1
           - android13-5.15
           - android12-5.10
+          - custom
         default: A14+15+16
+      custom_device:
+        description: 'Specific device model to build (only used when op_model=custom, e.g., OP12)'
+        required: false
+        type: string
+        default: ''
       ksu_options:
         description: 'Enter KernelSU build json'
         required: true
@@ -157,12 +163,21 @@ jobs:
             android*-*.*)
               # Extract android version and kernel version
               IFS='-' read -r av kv <<< "$input"
-              
+
               # Build android*-* only for A15 and A16
               jq_filter="map(select(.os_version == \"A15\" or .os_version == \"A16\")) | map(select(.android_version == \"$av\" and .kernel_version == \"$kv\"))"
-              
+
               echo "ℹ️  Android-Kernel filter applied: $av-$kv"
               echo "   Restricted to: A15 and A16 only"
+              ;;
+            custom)
+              custom_device="${{ github.event.inputs.custom_device }}"
+              if [ -z "$custom_device" ]; then
+                echo "::error::custom_device must be specified when op_model=custom"
+                exit 1
+              fi
+              jq_filter="map(select(.model == \"$custom_device\"))"
+              echo "ℹ️  Custom device filter applied: $custom_device"
               ;;
             *)
               echo "::warning::Unknown input '$input'. Using empty filter."
