@@ -1651,7 +1651,7 @@ runs:
         echo "Customize Kernel Branding"
         cd "$COMMON_KERNEL_FOLDER"
         mkdir -p out
-        CUSTOM_LOCALVERSION="-${ANDROID_VER}-${OP_UNAME}"
+        CUSTOM_LOCALVERSION="-${ANDROID_VER}-${OP_UNAME}-NH"
         echo "CUSTOM_LOCALVERSION=$CUSTOM_LOCALVERSION" >> "$GITHUB_ENV"
 
     - name: Disable GPUEB
@@ -1793,6 +1793,17 @@ runs:
         
         
         make LD="$COMMON_KERNEL_FOLDER/ld-wrapper" HOSTLD="$COMMON_KERNEL_FOLDER/ld-wrapper" O="$OUT" olddefconfig
+        
+        # Merge NetHunter kernel config options
+        NETHUNTER_CONFIG="$WORKSPACE/action-source/nethunter-configs/nethunter_defconfig"
+        if [ -f "$NETHUNTER_CONFIG" ]; then
+          echo "🎯 Merging NetHunter kernel config options..."
+          cd "$COMMON_KERNEL_FOLDER"
+          scripts/kconfig/merge_config.sh -m -O "$OUT" "$OUT/.config" "$NETHUNTER_CONFIG"
+          echo "✅ NetHunter config merged"
+        else
+          echo "⚠️ NetHunter config not found at $NETHUNTER_CONFIG"
+        fi
         
         KCFLAGS="$KCFLAGS -Wno-error -pipe ${KCFLAGS_EXTRA}"
         KCPPFLAGS="$KCPPFLAGS -DCONFIG_OPTIMIZE_INLINING"

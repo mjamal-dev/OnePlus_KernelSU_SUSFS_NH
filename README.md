@@ -83,6 +83,7 @@ Flashing this kernel will not void your warranty, but there is always a risk of 
 - </> **Unicode Bypass Fix**: Prevent path traversal and other detections using non-printable Unicode codepoints [Experimental]
 - 🖥️ **Droidspaces Support**: Support Portable Linux containers to run full Linux environments.
 - 🔃 **NTSync**: Provide high-performance, low-latency synchronization primitives compatible with the Windows NT kernel API
+- 🎯 **Kali NetHunter Config**: Kernel configuration options for NetHunter features (WiFi, Bluetooth, USB adapters)
 
 ---
 
