@@ -1791,9 +1791,6 @@ runs:
             ;;
         esac
         
-        
-        make LD="$COMMON_KERNEL_FOLDER/ld-wrapper" HOSTLD="$COMMON_KERNEL_FOLDER/ld-wrapper" O="$OUT" olddefconfig
-        
         # Merge NetHunter kernel config options
         NETHUNTER_CONFIG="$WORKSPACE/action-source/nethunter-configs/nethunter_defconfig"
         if [ -f "$NETHUNTER_CONFIG" ]; then
@@ -1804,6 +1801,10 @@ runs:
         else
           echo "⚠️ NetHunter config not found at $NETHUNTER_CONFIG"
         fi
+        
+        make LD="$COMMON_KERNEL_FOLDER/ld-wrapper" HOSTLD="$COMMON_KERNEL_FOLDER/ld-wrapper" O="$OUT" olddefconfig
+        
+        grep -E "CFG80211|MAC80211|MT7601U" "$OUT/.config"
         
         KCFLAGS="$KCFLAGS -Wno-error -pipe ${KCFLAGS_EXTRA}"
         KCPPFLAGS="$KCPPFLAGS -DCONFIG_OPTIMIZE_INLINING"
